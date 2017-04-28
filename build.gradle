@@ -1,0 +1,90 @@
+///////////////////////////////////////
+///////// Build Configuration /////////
+///////////////////////////////////////
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+")
+    }
+}
+subprojects {
+    group 'cc.happyfish.utility'
+    apply plugin: "com.jfrog.bintray"
+    apply plugin: "idea"
+    apply plugin: "java"
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = "UTF-8"
+    configurations {
+        all*.exclude module: "commons-logging"
+    }
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        compile(
+                "org.slf4j:jcl-over-slf4j:1.7.+",
+        )
+        testCompile(
+                "junit:junit:4.12"
+        )
+    }
+    /*task readKey(key:String){
+        def file = new File("key.csv")
+        file.eachLine("UTF-8") {
+            if( key == it.split("=")[0]){
+                return println(it.split("=")[1])
+            }
+        }
+        return null
+    }*/
+}
+///////////////////////////////////////
+////// Development Configuration //////
+///////////////////////////////////////
+project(":Web") {
+    dependencies {
+        compile(
+                "jstl:jstl:1.2",
+                "javax.servlet:javax.servlet-api:3.1.0",
+        )
+        compile("javax.servlet:jsp-api:2.0") { exclude module: "servlet-api" }
+    }
+    version '0.1'
+    archivesBaseName = "cc.happyfish.utility.web"
+}
+project(":Java") {
+    dependencies {
+        testCompile(
+                "junit:junit:4.12"
+        )
+    }
+    version '0.1'
+    archivesBaseName = "cc.happyfish.utility.java"
+}
+project(":Spring") {
+    def springVersion = "4.3.8.RELEASE"
+    def hibernateVersion = "5.2.10.Final"
+    def hibernateValidatorVersion = "5.2.5.Final"
+    def jacksonVersion = "2.8.8"
+    def springDataVersion = "1.11.3.RELEASE"
+    def queryDslVersion = "4.1.4"
+    dependencies {
+        compile project(':Web')
+        compile(
+                "org.springframework:spring-webmvc:${springVersion}",
+                "org.hibernate:hibernate-entitymanager:${hibernateVersion}",
+                "org.hibernate:hibernate-validator:${hibernateValidatorVersion}",
+                "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:${jacksonVersion}",
+                "org.springframework.data:spring-data-jpa:${springDataVersion}",
+                "com.querydsl:querydsl-apt:${queryDslVersion}",
+        )
+        testCompile(
+                "junit:junit:4.12"
+        )
+    }
+    version '0.1'
+    archivesBaseName = "cc.happyfish.utility.spring"
+}
